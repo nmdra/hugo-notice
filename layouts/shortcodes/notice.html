@@ -61,7 +61,7 @@
     "quote"    `<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/>`
 -}}
 {{- $icon := index $icons $typeArg | safeHTML -}}
-{{- $chevron := `<path d="m6 9 6 6 6-6"/>` | safeHTML -}}
+{{- $chevron := `<path d="m9 18 6-6-6-6"/>` | safeHTML -}}
 
 {{/* Workaround markdownify inconsistency for single/multiple paragraphs */}}
 {{- $raw := (markdownify .Inner | chomp) -}}
@@ -137,13 +137,25 @@
 
     details.notice summary::-webkit-details-marker { display: none; }
 
-    .notice-chevron {
-        margin-left: auto;
-        opacity: .55;
-        transition: transform .15s ease;
+    /* Compact bar when collapsed, like Obsidian */
+    details.notice:not([open]) {
+        padding: .5rem .9rem;
     }
 
-    details.notice[open] .notice-chevron { transform: rotate(180deg); }
+    details.notice:not([open]) .notice-title { margin-bottom: 0; }
+
+    .notice-chevron {
+        display: inline-flex;
+        opacity: .55;
+        transition: transform .15s ease, opacity .15s ease;
+    }
+
+    details.notice[open] .notice-chevron {
+        transform: rotate(90deg);
+        opacity: 1;
+    }
+
+    details.notice summary:hover .notice-chevron { opacity: 1; }
 </style>
 {{- .Page.Store.Set "notice-style-loaded-flag" true -}}
 {{- end -}}
