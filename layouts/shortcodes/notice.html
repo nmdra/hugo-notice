@@ -144,21 +144,32 @@
 
     details.notice:not([open]) .notice-title { margin-bottom: 0; }
 
-    /* Smooth unfold/collapse */
+    /* Smooth unfold/collapse: grid-rows animation on the
+       details-content box (works both directions in any browser
+       that supports ::details-content; instant fallback elsewhere) */
     details.notice {
-        interpolate-size: allow-keywords;
+        transition: padding .3s ease;
+    }
+
+    details.notice .notice-title {
+        transition: margin-bottom .3s ease;
     }
 
     details.notice::details-content {
-        block-size: 0;
-        overflow: clip;
+        display: grid;
+        grid-template-rows: 0fr;
         opacity: 0;
-        transition: block-size .3s ease, opacity .25s ease;
+        transition: grid-template-rows .3s cubic-bezier(.4, 0, .2, 1), opacity .2s ease;
     }
 
     details.notice[open]::details-content {
-        block-size: auto;
+        grid-template-rows: 1fr;
         opacity: 1;
+    }
+
+    details.notice::details-content > * {
+        overflow: hidden;
+        min-height: 0;
     }
 
     .notice-chevron {
