@@ -163,7 +163,7 @@
 {{- if $foldable -}}
 <details class="notice {{ $typeArg }}"{{ if $open }} open{{ end }}>
     <summary class="notice-title">
-        <span class="notice-icon">{{ $icon }}</span>
+        <span class="notice-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $icon }}</svg></span>
         <span>{{ $title }}</span>
         <span class="notice-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $chevron }}</svg></span>
     </summary>
