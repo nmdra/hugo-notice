@@ -144,6 +144,23 @@
 
     details.notice:not([open]) .notice-title { margin-bottom: 0; }
 
+    /* Smooth unfold/collapse */
+    details.notice {
+        interpolate-size: allow-keywords;
+    }
+
+    details.notice::details-content {
+        block-size: 0;
+        overflow: clip;
+        opacity: 0;
+        transition: block-size .3s ease, opacity .25s ease;
+    }
+
+    details.notice[open]::details-content {
+        block-size: auto;
+        opacity: 1;
+    }
+
     .notice-chevron {
         display: inline-flex;
         opacity: .55;
