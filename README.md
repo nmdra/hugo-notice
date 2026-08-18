@@ -1,20 +1,16 @@
 # hugo-notice
 
-[![Awesome](https://awesome.re/badge.svg)](https://github.com/budparr/awesome-hugo)
+Fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPLv3) — a [Hugo](https://gohugo.io) theme component providing a `notice` shortcode that renders **Obsidian-style callouts**, with native light/dark mode support and [Catppuccin](https://github.com/catppuccin/palette) colors (Latte/Mocha) that fit the PaperMod theme.
 
-## About
+## Features
 
-A [Hugo](https://gohugo.io) theme component providing a shortcode: `notice` to display nice notices, and supporting dark mode.
-
-Several sets of icons are provided too: make your choice second your taste!
-
-Four notice types are provided: `warning`, `info`, `note` and `tip`.
-
-This component comes with __localization in 18 languages__: English, French, German, Italian, Portuguese, Spanish, Chinese, Russian, Turkish, Arabic, Polish, Finnish, Korean, Vietnamese, Swahili, Japanese, Chinese (Taiwan) and Swedish.
-
-Other languages welcome! Send your pull request.
-
-![Screenshot](screenshot.png)
+- 13 callout types from [Obsidian](https://obsidian.md/help/callouts): `note`, `abstract`, `info`, `todo`, `tip`, `success`, `question`, `warning`, `failure`, `danger`, `bug`, `example`, `quote`
+- Obsidian aliases: `summary`/`tldr`, `hint`/`important`, `check`/`done`, `help`/`faq`, `caution`/`attention`, `fail`/`missing`, `error`, `cite`
+- Foldable callouts: `{{< notice tip+ >}}` (expanded) / `{{< notice tip- >}}` (collapsed)
+- Custom titles: `{{< notice tip "A New Title" >}}`
+- Dark mode follows the theme toggle — works with PaperMod's `:root[data-theme="dark"]` (also `prefers-color-scheme` and `body.dark` setups)
+- Inline Lucide-style stroke icons, no icon files needed
+- Localization in 18 languages (English and 17 community translations; the 9 new type titles fall back to English in non-English locales)
 
 ## Installation
 
@@ -26,10 +22,10 @@ Other languages welcome! Send your pull request.
     hugo mod init github.com/USERNAME/REPO
     ```
 
-2. Add the `hugo-notice` as a hugo module to be able to get upstream changes later
+2. Add `hugo-notice` as a hugo module
 
     ```shell
-    hugo mod get github.com/martignoni/hugo-notice
+    hugo mod get github.com/nmdra/hugo-notice
     ```
 
 3. In your site's or theme's configuration file `hugo.yaml` or `hugo.toml`, add a new `module` section and define both `hugo-notice` and your currently used theme as modules to be imported.
@@ -38,21 +34,21 @@ Other languages welcome! Send your pull request.
     ```yaml
     module:
       imports:
-        - path: github.com/martignoni/hugo-notice
+        - path: github.com/nmdra/hugo-notice
         - path: my-theme
     ```
     or, with `hugo.toml`,
     ```toml
     [module]
       [[module.imports]]
-        path = "github.com/martignoni/hugo-notice"
+        path = "github.com/nmdra/hugo-notice"
       [[module.imports]]
         path = "my-theme"
     ```
 
 ### As a Git submodule
 
-1. Add the `hugo-notice` as a submodule to be able to get upstream changes later `git submodule add https://github.com/martignoni/hugo-notice.git themes/hugo-notice`
+1. Add `hugo-notice` as a submodule to be able to get upstream changes later `git submodule add https://github.com/nmdra/hugo-notice.git themes/hugo-notice`
 
 2. Add `hugo-notice` as the left-most element of the `theme` list variable in your site's or theme's configuration file `hugo.yaml` or `hugo.toml`.
 
@@ -64,24 +60,28 @@ Other languages welcome! Send your pull request.
     ```toml
     theme = ["hugo-notice", "my-theme"]
     ```
+
 ## Usage
 
 In your site, use the shortcode, this way:
-```go
+
+```markdown
 {{< notice warning >}}
 This is a warning notice. Be warned!
 {{< /notice >}}
 ```
-or
-```go
+
+```markdown
 {{< notice tip >}}
 This is a very good tip.
 {{< /notice >}}
 ```
 
-You may also change the the title of the notice by providing a string as a second argument:
+### Custom title
 
-```go
+You may change the title of the notice by providing a string as a second argument:
+
+```markdown
 {{< notice tip "A New Title" >}}
 This is a very good tip with a different title.
 {{< /notice >}}
@@ -89,45 +89,59 @@ This is a very good tip with a different title.
 
 Note that unlike the built-in ones, these titles are not translatable by hugo-notice. If you need translation, you will need to translate them before passing them in.
 
-### Enabling dark mode
+### Aliases
 
-We recommend that you use the standard [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to detect if a user has requested light or dark color themes. In this case, dark mode will work automatically. The `prefers-color-scheme` media feature is fully supported by all modern browsers.
+All Obsidian aliases are supported. For example, `{{< notice summary >}}` and `{{< notice tldr >}}` render as `abstract`, and `{{< notice error >}}` renders as `danger`.
 
-Another way to make it work is to inject (e.g. via Javascript) the class `dark` into the `body` element of your pages when dark mode is needed.
+### Foldable callouts
 
-### Changing icon set
+Append `+` (expanded by default) or `-` (collapsed) to the type:
 
-Just copy the icons from one of the subfolders of folder `icons/` into folder `icons/`.
+```markdown
+{{< notice question- >}}
+The answer is hidden until the reader expands the callout.
+{{< /notice >}}
+```
 
-Any __solid__ SVG icons can be used. If you want to contribute your open licensed icons, your pull request is welcome.
+```markdown
+{{< notice todo+ "Release checklist" >}}
+- [ ] Update CHANGELOG
+- [ ] Run regression tests
+{{< /notice >}}
+```
 
-## Acknowledgements
+### Types and colors
 
-Copyright © 2019 onwards, Nicolas Martignoni nicolas@martignoni.net.
+| Type | Aliases | Icon | Light accent | Dark accent |
+|---|---|---|---|---|
+| `note` | — | pencil | blue `#1e66f5` | `#89b4fa` |
+| `abstract` | `summary`, `tldr` | clipboard | teal `#179299` | `#94e2d5` |
+| `info` | — | info | sky `#04a5e5` | `#89dceb` |
+| `todo` | — | checkbox | lavender `#7287fd` | `#b4befe` |
+| `tip` | `hint`, `important` | flame | green `#40a02b` | `#a6e3a1` |
+| `success` | `check`, `done` | check | green `#40a02b` | `#a6e3a1` |
+| `question` | `help`, `faq` | question mark | yellow `#df8e1d` | `#f9e2af` |
+| `warning` | `caution`, `attention` | triangle | peach `#fe640b` | `#fab387` |
+| `failure` | `fail`, `missing` | cross | red `#d20f39` | `#f38ba8` |
+| `danger` | `error` | zap | red `#d20f39` | `#f38ba8` |
+| `bug` | — | bug | maroon `#e64553` | `#eba0ac` |
+| `example` | — | list | mauve `#8839ef` | `#cba6f7` |
+| `quote` | `cite` | quote | gray `#6c6f85` | `#a6adc8` |
+
+Unknown types fall back to `note` (Obsidian behavior).
+
+The callout background and border are derived from the accent with `color-mix`, so they adapt automatically to light and dark themes. Requires a browser from 2023 onward (Chrome 111+, Firefox 113+, Safari 16.2+).
+
+### Dark mode
+
+The component targets `:root[data-theme="dark"]`, the standard used by PaperMod's theme toggle. It works out of the box with PaperMod, and also follows the standard `prefers-color-scheme` media feature when no `data-theme` attribute is present (e.g. with other themes).
+
+## Development
 
 ### Localization
 
-Thanks to
-- [Geraldo Ribeiro](https://github.com/geraldolsribeiro) for the Portuguese localization.
-- [thatrocketx](https://github.com/thatrocketx) for the Italian localization.
-- [casaqori](https://github.com/casaqori) for the Spanish localization.
-- [理头张](https://github.com/qidongz) for the Chinese localization.
-- [Алексей Корнеев](https://github.com/korney4eg) for the Russian localization.
-- [Ahmad Al Maaz](https://github.com/Music47ell) for the Turkish and Arabic localizations.
-- [Rafal S.](https://github.com/sulik76) for the Polish localization.
-- [Oskari J. Manninen](https://github.com/x7Gv) for the Finnish localization.
-- [Haseop Lee](https://github.com/haservi) for the Korean localization.
-- [Bùi Nguyễn Hoàng Thọ](https://discourse.gohugo.io/u/hoangtho97/summary) for the Vietnamese localization.
-- [callaloo](https://github.com/callaloo) for the Swahili localization.
-- [kevinzch](https://github.com/kevinzch) for the Japanese and Chinese (Taiwan) localizations.
-- [mcfrojd](https://github.com/mcfrojd) for the Swedish localization.
+Thanks to the original hugo-notice contributors for the 17 non-English translations.
 
-### Development
+### Acknowledgement
 
-Thanks to
-- [Gary Tai](https://github.com/gary-tai) for raising a nasty spacing bug.
-- [Dephilia](https://github.com/Dephilia) for suggesting and implementing dark mode.
-- [RoneoOrg](https://github.com/RoneoOrg) for implementing default notice type.
-- [Andreas Deininger](https://github.com/deining) for installation as a Hugo module How To.
-- [rea1shane](https://github.com/rea1shane) for suggesting and implementing a few useful features.
-- [Andy Maloney](https://github.com/asmaloney) for implementing a way to replace the title with an arbitrary string.
+This component is a fork of [hugo-notice](https://github.com/martignoni/hugo-notice) by Nicolas Martignoni, licensed under GPLv3. Lucide icons are MIT-licensed.

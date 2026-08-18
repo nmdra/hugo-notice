@@ -6,3 +6,21 @@
   translation: "Info"
 - id: tip
   translation: "Tip"
+- id: abstract
+  translation: "Abstract"
+- id: todo
+  translation: "Todo"
+- id: success
+  translation: "Success"
+- id: question
+  translation: "Question"
+- id: failure
+  translation: "Failure"
+- id: danger
+  translation: "Danger"
+- id: bug
+  translation: "Bug"
+- id: example
+  translation: "Example"
+- id: quote
+  translation: "Quote"

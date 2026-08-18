@@ -2,18 +2,21 @@
 
 name: Display notice
 license: GPLv3
-licenselink: https://github.com/martignoni/hugo-notice/blob/master/LICENSE
-description: Hugo theme component to display nice info notices
-homepage: https://github.com/martignoni/hugo-notice
+licenselink: https://github.com/nmdra/hugo-notice/blob/main/LICENSE
+description: Hugo theme component to display Obsidian-style callouts with Catppuccin colors
+homepage: https://github.com/nmdra/hugo-notice
 tags:
   - component
   - notice
+  - callout
   - multilingual
 features:
-  - nicely display notices
+  - 13 Obsidian callout types with aliases
+  - foldable callouts
+  - light/dark mode (Catppuccin Latte/Mocha)
   - multilingual (en, fr, de)
-min_version: 0.40.0
+min_version: 0.113.0
 
 author:
-  name: Nicolas Martignoni
-  homepage: https://martignoni.net
+  name: Nimendra
+  homepage: https://github.com/nmdra
