@@ -17,12 +17,15 @@
 
 {{- /* Resolve type: lowercase, strip fold marker, map aliases */ -}}
 {{- $typeArg := .Get 0 | lower | default "note" -}}
+{{- $foldable := false -}}
 {{- $open := false -}}
 {{- if strings.HasSuffix $typeArg "+" -}}
+    {{- $foldable = true -}}
     {{- $open = true -}}
-    {{- $typeArg = strings.TrimSuffix $typeArg "+" -}}
+    {{- $typeArg = replace $typeArg "+" "" -}}
 {{- else if strings.HasSuffix $typeArg "-" -}}
-    {{- $typeArg = strings.TrimSuffix $typeArg "-" -}}
+    {{- $foldable = true -}}
+    {{- $typeArg = replace $typeArg "-" "" -}}
 {{- end -}}
 
 {{- $aliases := dict
@@ -145,7 +148,7 @@
 {{- .Page.Store.Set "notice-style-loaded-flag" true -}}
 {{- end -}}
 
-{{- if $fold -}}
+{{- if $foldable -}}
 <details class="notice {{ $typeArg }}"{{ if $open }} open{{ end }}>
     <summary class="notice-title">
         <span class="notice-icon">{{ $icon }}</span>

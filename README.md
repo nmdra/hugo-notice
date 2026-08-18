@@ -6,7 +6,7 @@ Fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPL
 
 - 13 callout types from [Obsidian](https://obsidian.md/help/callouts): `note`, `abstract`, `info`, `todo`, `tip`, `success`, `question`, `warning`, `failure`, `danger`, `bug`, `example`, `quote`
 - Obsidian aliases: `summary`/`tldr`, `hint`/`important`, `check`/`done`, `help`/`faq`, `caution`/`attention`, `fail`/`missing`, `error`, `cite`
-- Foldable callouts: `{{< notice tip+ >}}` (expanded) / `{{< notice tip- >}}` (collapsed)
+- Foldable callouts: `{{< notice "tip+" >}}` (expanded) / `{{< notice "tip-" >}}` (collapsed)
 - Custom titles: `{{< notice tip "A New Title" >}}`
 - Dark mode follows the theme toggle — works with PaperMod's `:root[data-theme="dark"]` (also `prefers-color-scheme` and `body.dark` setups)
 - Inline Lucide-style stroke icons, no icon files needed
@@ -95,16 +95,16 @@ All Obsidian aliases are supported. For example, `{{< notice summary >}}` and `{
 
 ### Foldable callouts
 
-Append `+` (expanded by default) or `-` (collapsed) to the type:
+Append `+` (expanded by default) or `-` (collapsed) to the type. Note that the type argument must be quoted for Hugo to parse it:
 
 ```markdown
-{{< notice question- >}}
+{{< notice "question-" >}}
 The answer is hidden until the reader expands the callout.
 {{< /notice >}}
 ```
 
 ```markdown
-{{< notice todo+ "Release checklist" >}}
+{{< notice "todo+" "Release checklist" >}}
 - [ ] Update CHANGELOG
 - [ ] Run regression tests
 {{< /notice >}}
