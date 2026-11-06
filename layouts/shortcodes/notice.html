@@ -5,8 +5,8 @@
    Usage:
      {{< notice type >}}content{{< /notice >}}
      {{< notice type "Custom title" >}}content{{< /notice >}}
-     {{< notice type+ "Custom title" >}}content{{< /notice >}}   expanded foldable
-     {{< notice type- >}}content{{< /notice >}}                  collapsed foldable
+     {{< notice "type+" "Custom title" >}}content{{< /notice >}} expanded foldable
+     {{< notice "type-" >}}content{{< /notice >}}                collapsed foldable
 
    Types (13): note, abstract, info, todo, tip, success, question,
                warning, failure, danger, bug, example, quote
@@ -22,10 +22,10 @@
 {{- if strings.HasSuffix $typeArg "+" -}}
     {{- $foldable = true -}}
     {{- $open = true -}}
-    {{- $typeArg = replace $typeArg "+" "" -}}
+    {{- $typeArg = strings.TrimSuffix "+" $typeArg -}}
 {{- else if strings.HasSuffix $typeArg "-" -}}
     {{- $foldable = true -}}
-    {{- $typeArg = replace $typeArg "-" "" -}}
+    {{- $typeArg = strings.TrimSuffix "-" $typeArg -}}
 {{- end -}}
 
 {{- $aliases := dict
@@ -42,7 +42,17 @@
 {{- $valid := slice "note" "abstract" "info" "todo" "tip" "success" "question" "warning" "failure" "danger" "bug" "example" "quote" -}}
 {{- if not (in $valid $typeArg) }}{{ $typeArg = "note" }}{{ end -}}
 
-{{- $title := .Get 1 | default (i18n $typeArg) -}}
+{{- /* Hugo falls back to the site's default language, which need not be English. */ -}}
+{{- $englishTitles := dict
+    "note" "Note" "abstract" "Abstract" "info" "Info" "todo" "Todo"
+    "tip" "Tip" "success" "Success" "question" "Question" "warning" "Warning"
+    "failure" "Failure" "danger" "Danger" "bug" "Bug" "example" "Example" "quote" "Quote"
+-}}
+{{- $translatedTitle := i18n $typeArg -}}
+{{- if or (not $translatedTitle) (strings.HasPrefix $translatedTitle "[i18n]") -}}
+    {{- $translatedTitle = index $englishTitles $typeArg -}}
+{{- end -}}
+{{- $title := .Get 1 | default $translatedTitle -}}
 
 {{- /* Lucide-style icons (24x24, stroke, MIT license), one per type */ -}}
 {{- $icons := dict
@@ -63,146 +73,33 @@
 {{- $icon := index $icons $typeArg | safeHTML -}}
 {{- $chevron := `<path d="m9 18 6-6-6-6"/>` | safeHTML -}}
 
-{{/* Workaround markdownify inconsistency for single/multiple paragraphs */}}
-{{- $raw := (markdownify .Inner | chomp) -}}
-{{- $block := findRE "(?is)^<(?:address|article|aside|blockquote|canvas|dd|div|dl|dt|fieldset|figcaption|figure|footer|form|h(?:1|2|3|4|5|6)|header|hgroup|hr|li|main|nav|noscript|ol|output|p|pre|section|table|tfoot|ul|video)\\b" $raw 1 -}}
-
-{{/* Load the css if it's the first time */}}
-{{- if not (.Page.Store.Get "notice-style-loaded-flag") -}}
-<style type="text/css">
-    /* ── Callout base ──────────────────────────────────────── */
-    .notice {
-        --notice-accent: #1e66f5;
-        margin: 1.5rem 0;
-        padding: 1rem 1.125rem;
-        border: 1px solid color-mix(in srgb, var(--notice-accent) 20%, transparent);
-        border-left: 4px solid var(--notice-accent);
-        border-radius: var(--radius, 8px);
-        background: color-mix(in srgb, var(--notice-accent) 9%, transparent);
-    }
-
-    /* ── Catppuccin Latte accents ─────────────────────────── */
-    .notice.note     { --notice-accent: #1e66f5; }  /* blue     */
-    .notice.abstract { --notice-accent: #179299; }  /* teal     */
-    .notice.info     { --notice-accent: #04a5e5; }  /* sky      */
-    .notice.todo     { --notice-accent: #7287fd; }  /* lavender */
-    .notice.tip      { --notice-accent: #40a02b; }  /* green    */
-    .notice.success  { --notice-accent: #40a02b; }  /* green    */
-    .notice.question { --notice-accent: #df8e1d; }  /* yellow   */
-    .notice.warning  { --notice-accent: #fe640b; }  /* peach    */
-    .notice.failure  { --notice-accent: #d20f39; }  /* red      */
-    .notice.danger   { --notice-accent: #d20f39; }  /* red      */
-    .notice.bug      { --notice-accent: #e64553; }  /* maroon   */
-    .notice.example  { --notice-accent: #8839ef; }  /* mauve    */
-    .notice.quote    { --notice-accent: #6c6f85; }  /* gray     */
-
-    /* ── Catppuccin Mocha accents (PaperMod dark mode) ────── */
-    :root[data-theme="dark"] .notice.note     { --notice-accent: #89b4fa; }
-    :root[data-theme="dark"] .notice.abstract { --notice-accent: #94e2d5; }
-    :root[data-theme="dark"] .notice.info     { --notice-accent: #89dceb; }
-    :root[data-theme="dark"] .notice.todo     { --notice-accent: #b4befe; }
-    :root[data-theme="dark"] .notice.tip      { --notice-accent: #a6e3a1; }
-    :root[data-theme="dark"] .notice.success  { --notice-accent: #a6e3a1; }
-    :root[data-theme="dark"] .notice.question { --notice-accent: #f9e2af; }
-    :root[data-theme="dark"] .notice.warning  { --notice-accent: #fab387; }
-    :root[data-theme="dark"] .notice.failure  { --notice-accent: #f38ba8; }
-    :root[data-theme="dark"] .notice.danger   { --notice-accent: #f38ba8; }
-    :root[data-theme="dark"] .notice.bug      { --notice-accent: #eba0ac; }
-    :root[data-theme="dark"] .notice.example  { --notice-accent: #cba6f7; }
-    :root[data-theme="dark"] .notice.quote    { --notice-accent: #a6adc8; }
-
-    /* ── Title ────────────────────────────────────────────── */
-    .notice-title {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        margin: 0 0 .5rem;
-        font-weight: 700;
-        color: var(--notice-accent);
-    }
-
-    .notice-icon { display: inline-flex; }
-    .notice-icon svg { width: 1.15em; height: 1.15em; }
-
-    /* ── Content ──────────────────────────────────────────── */
-    .notice-content > :first-child { margin-top: 0; }
-    .notice-content > :last-child { margin-bottom: 0; }
-
-    /* ── Foldable ─────────────────────────────────────────── */
-    details.notice summary {
-        list-style: none;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    details.notice summary::-webkit-details-marker { display: none; }
-
-    /* Compact bar when collapsed, like Obsidian */
-    details.notice:not([open]) {
-        padding: .5rem .9rem;
-    }
-
-    details.notice:not([open]) .notice-title { margin-bottom: 0; }
-
-    /* Smooth unfold/collapse: grid-rows animation on the
-       details-content box (works both directions in any browser
-       that supports ::details-content; instant fallback elsewhere) */
-    details.notice {
-        transition: padding .3s ease;
-    }
-
-    details.notice .notice-title {
-        transition: margin-bottom .3s ease;
-    }
-
-    details.notice::details-content {
-        display: grid;
-        grid-template-rows: 0fr;
-        opacity: 0;
-        transition: grid-template-rows .3s cubic-bezier(.4, 0, .2, 1), opacity .2s ease;
-    }
-
-    details.notice[open]::details-content {
-        grid-template-rows: 1fr;
-        opacity: 1;
-    }
-
-    details.notice::details-content > * {
-        overflow: hidden;
-        min-height: 0;
-    }
-
-    .notice-chevron {
-        display: inline-flex;
-        opacity: .55;
-        transition: transform .15s ease, opacity .15s ease;
-    }
-
-    details.notice[open] .notice-chevron {
-        transform: rotate(90deg);
-        opacity: 1;
-    }
-
-    details.notice summary:hover .notice-chevron { opacity: 1; }
-</style>
-{{- .Page.Store.Set "notice-style-loaded-flag" true -}}
+{{- /* Keep nested notices out of Goldmark's raw-HTML processing. Each child
+      registers trusted template output on its parent and returns a block token.
+      Only that registered output is restored after Markdown rendering. */ -}}
+{{- $raw := .Page.RenderString (dict "display" "block") .Inner -}}
+{{- range $token, $child := .Scratch.Get "hugo-notice-children" -}}
+    {{- $raw = replace $raw (printf "<p>%s</p>" $token) $child -}}
+    {{- $raw = replace $raw $token $child -}}
 {{- end -}}
+{{- $callout := partial "hugo-notice/callout.html" (dict
+    "type" $typeArg "title" $title "content" ($raw | safeHTML)
+    "icon" $icon "chevron" $chevron "foldable" $foldable "open" $open
+) -}}
 
-{{- if $foldable -}}
-<details class="notice {{ $typeArg }}"{{ if $open }} open{{ end }}>
-    <summary class="notice-title">
-        <span class="notice-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $icon }}</svg></span>
-        <span>{{ $title }}</span>
-        <span class="notice-chevron"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $chevron }}</svg></span>
-    </summary>
-    {{- if or $block (not $raw) }}<div class="notice-content">{{ $raw }}</div>{{ else }}<div class="notice-content"><p>{{ $raw }}</p></div>{{ end -}}
-</details>
+{{- if and .Parent (eq .Parent.Name "notice") -}}
+    {{- $token := printf "HUGONOTICE%sEND" (md5 (printf "%s:%d" .Position .Ordinal)) -}}
+    {{- .Parent.Scratch.SetInMap "hugo-notice-children" $token $callout -}}
+    {{- printf "\n\n%s\n\n" $token -}}
 {{- else -}}
-<div class="notice {{ $typeArg }}">
-    <p class="notice-title">
-        <span class="notice-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $icon }}</svg></span>
-        <span>{{ $title }}</span>
-    </p>
-    {{- if or $block (not $raw) }}<div class="notice-content">{{ $raw }}</div>{{ else }}<div class="notice-content"><p>{{ $raw }}</p></div>{{ end -}}
-</div>
+    {{- /* Store the owning shortcode, not a loaded flag: a page may render
+          its shortcodes again for another output format. */ -}}
+    {{- $styleOwner := md5 (printf "%s:%d" .Position .Ordinal) -}}
+    {{- if not (.Page.Store.Get "hugo-notice-style-owner") -}}
+        {{- .Page.Store.Set "hugo-notice-style-owner" $styleOwner -}}
+    {{- end -}}
+    {{- if eq (.Page.Store.Get "hugo-notice-style-owner") $styleOwner -}}
+        {{- $style := resources.Get "css/hugo-notice.css" | fingerprint -}}
+        <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+    {{- end -}}
+    {{- $callout -}}
 {{- end -}}

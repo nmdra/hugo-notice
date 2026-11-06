@@ -2,6 +2,9 @@
 public/
 resources/
 
+# Python test artifacts
+__pycache__/
+
 # Node
 node_modules/
 

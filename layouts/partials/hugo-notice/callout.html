@@ -1,0 +1,18 @@
+{{- if .foldable -}}
+<details class="notice {{ .type }}"{{ if .open }} open{{ end }}>
+    <summary class="notice-title">
+        {{ partial "hugo-notice/icon.html" (dict "class" "notice-icon" "paths" .icon) }}
+        <span>{{ .title }}</span>
+        {{ partial "hugo-notice/icon.html" (dict "class" "notice-chevron" "paths" .chevron) }}
+    </summary>
+    <div class="notice-content">{{ .content }}</div>
+</details>
+{{- else -}}
+<div class="notice {{ .type }}">
+    <p class="notice-title">
+        {{ partial "hugo-notice/icon.html" (dict "class" "notice-icon" "paths" .icon) }}
+        <span>{{ .title }}</span>
+    </p>
+    <div class="notice-content">{{ .content }}</div>
+</div>
+{{- end -}}

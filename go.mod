@@ -1,3 +1,3 @@
-module github.com/martignoni/hugo-notice
+module github.com/nmdra/hugo-notice
 
 go 1.18

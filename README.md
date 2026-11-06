@@ -110,6 +110,22 @@ The answer is hidden until the reader expands the callout.
 {{< /notice >}}
 ```
 
+### Nested callouts
+
+Put each nested shortcode on its own line. You do not need to enable raw HTML in Goldmark:
+
+```markdown
+{{< notice "note+" "Outer callout" >}}
+Outer content.
+
+{{< notice "tip-" "Inner callout" >}}
+Inner content.
+{{< /notice >}}
+{{< /notice >}}
+```
+
+Foldable content opens and closes immediately through the browser's native `<details>` behavior. The fold indicator has a short transition, which is disabled when the reader requests reduced motion.
+
 ### Types and colors
 
 | Type | Aliases | Icon | Light accent | Dark accent |
@@ -130,7 +146,7 @@ The answer is hidden until the reader expands the callout.
 
 For unknown types, the component uses `note`, as Obsidian does.
 
-The component uses `color-mix` to derive the callout background and border from the accent color. The background and border adapt automatically to light and dark themes. This requires a browser from 2023 onward (Chrome 111+, Firefox 113+, Safari 16.2+).
+The component uses `color-mix` to derive the callout background and border from the accent color. Title text uses a separate color for contrast. The background and border adapt automatically to light and dark themes. This requires a browser from 2023 onward (Chrome 111+, Firefox 113+, Safari 16.2+).
 
 ### Dark mode
 
@@ -142,11 +158,11 @@ The component targets `:root[data-theme="dark"]`, the standard that PaperMod's t
 
 Add the following examples to a stylesheet that your site loads. Use your theme's method for loading custom CSS. You do not need to edit `layouts/shortcodes/notice.html`.
 
-The shortcode inserts a `<style>` element before the first callout on each page. Its rules can appear after your site's stylesheet. The examples use selectors with higher specificity than the component's selectors, so they do not depend on stylesheet order.
+The shortcode inserts a stylesheet link before the first outermost callout on each page. Hugo publishes the CSS from `assets/css/hugo-notice.css` with a fingerprinted filename. The examples use selectors with higher specificity than the component's selectors, so they do not depend on stylesheet order.
 
 ### Change accent colors
 
-Set `--notice-accent` on the callout type that you want to change. This property controls the title, icon, left border, background, and other borders. The background mixes 9% of the accent color with transparency. The other borders mix 20% of the accent color with transparency.
+Set `--notice-accent` on the callout type that you want to change. This property controls the icon, fold indicator, left border, background, and other borders. The background mixes 9% of the accent color with transparency. The other borders mix 20% of the accent color with transparency.
 
 This example changes the `tip` accent in light and dark modes:
 
@@ -183,6 +199,18 @@ To change the background or border color independently of the accent, override `
 
 ### Change titles and icons
 
+Set `--notice-title-color` on a callout to change its title text color. The default is `#343a40` in light mode and `#cdd6f4` in dark mode. Check text contrast against the callout background after you change either color.
+
+```css
+html:root .notice.tip {
+    --notice-title-color: #254b3f;
+}
+
+html:root[data-theme="dark"] .notice.tip {
+    --notice-title-color: #d5f5e8;
+}
+```
+
 Use the following selectors to change title spacing and icon size:
 
 ```css
@@ -197,13 +225,17 @@ html:root .notice-icon svg {
 }
 ```
 
-The icons use `currentColor` for their strokes. They inherit the title color unless your CSS overrides it.
+The icons use `currentColor` for their strokes. The icon and fold indicator use `--notice-accent`, independently of the title text color.
 
 ### Use another dark-mode selector
 
-If your theme sets `body.dark`, add an override for each type that you want to change:
+If your theme sets `body.dark`, set the dark title color for all callouts. Add an accent override for each type that you want to change:
 
 ```css
+html:root body.dark .notice {
+    --notice-title-color: #cdd6f4;
+}
+
 html:root body.dark .notice.tip {
     --notice-accent: #70e0c0;
 }
@@ -213,6 +245,10 @@ If your theme uses only the system color preference, put the override in a media
 
 ```css
 @media (prefers-color-scheme: dark) {
+    html:root:not([data-theme]) .notice {
+        --notice-title-color: #cdd6f4;
+    }
+
     html:root:not([data-theme]) .notice.tip {
         --notice-accent: #70e0c0;
     }
@@ -222,6 +258,16 @@ If your theme uses only the system color preference, put the override in a media
 The media-query example applies only when the root element has no `data-theme` attribute. It does not override an explicit light or dark selection through that attribute. Repeat the rule for other callout types as necessary.
 
 ## Development
+
+### Tests
+
+Install Hugo and Python 3. From the component directory, run:
+
+```shell
+python3 -m unittest discover -s tests -v
+```
+
+The tests build temporary Hugo sites. They do not change your site's content or configuration.
 
 ### Localization
 

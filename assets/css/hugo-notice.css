@@ -1,0 +1,107 @@
+/* Callout base. Set defaults on each notice so nested notices do not
+   inherit a parent's custom title color or accent. */
+.notice {
+    --notice-accent: #1e66f5;
+    --notice-title-color: #343a40;
+    margin: 1.5rem 0;
+    padding: 1rem 1.125rem;
+    border: 1px solid color-mix(in srgb, var(--notice-accent) 20%, transparent);
+    border-left: 4px solid var(--notice-accent);
+    border-radius: var(--radius, 8px);
+    background: color-mix(in srgb, var(--notice-accent) 9%, transparent);
+}
+
+/* Catppuccin Latte decorative accents. */
+.notice.note     { --notice-accent: #1e66f5; }
+.notice.abstract { --notice-accent: #179299; }
+.notice.info     { --notice-accent: #04a5e5; }
+.notice.todo     { --notice-accent: #7287fd; }
+.notice.tip      { --notice-accent: #40a02b; }
+.notice.success  { --notice-accent: #40a02b; }
+.notice.question { --notice-accent: #df8e1d; }
+.notice.warning  { --notice-accent: #fe640b; }
+.notice.failure  { --notice-accent: #d20f39; }
+.notice.danger   { --notice-accent: #d20f39; }
+.notice.bug      { --notice-accent: #e64553; }
+.notice.example  { --notice-accent: #8839ef; }
+.notice.quote    { --notice-accent: #6c6f85; }
+
+/* Catppuccin Mocha (PaperMod dark mode). Keep the default title
+   selector easy to override, including with html:root .notice. */
+:where(:root[data-theme="dark"]) .notice {
+    --notice-title-color: #cdd6f4;
+}
+
+:root[data-theme="dark"] .notice.note     { --notice-accent: #89b4fa; }
+:root[data-theme="dark"] .notice.abstract { --notice-accent: #94e2d5; }
+:root[data-theme="dark"] .notice.info     { --notice-accent: #89dceb; }
+:root[data-theme="dark"] .notice.todo     { --notice-accent: #b4befe; }
+:root[data-theme="dark"] .notice.tip      { --notice-accent: #a6e3a1; }
+:root[data-theme="dark"] .notice.success  { --notice-accent: #a6e3a1; }
+:root[data-theme="dark"] .notice.question { --notice-accent: #f9e2af; }
+:root[data-theme="dark"] .notice.warning  { --notice-accent: #fab387; }
+:root[data-theme="dark"] .notice.failure  { --notice-accent: #f38ba8; }
+:root[data-theme="dark"] .notice.danger   { --notice-accent: #f38ba8; }
+:root[data-theme="dark"] .notice.bug      { --notice-accent: #eba0ac; }
+:root[data-theme="dark"] .notice.example  { --notice-accent: #cba6f7; }
+:root[data-theme="dark"] .notice.quote    { --notice-accent: #a6adc8; }
+
+/* Titles and decorative icons belong only to their immediate notice. */
+.notice > .notice-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0 0 .5rem;
+    font-weight: 700;
+    color: var(--notice-title-color);
+}
+
+.notice > .notice-title > .notice-icon,
+.notice > .notice-title > .notice-chevron {
+    display: inline-flex;
+    color: var(--notice-accent);
+}
+
+.notice > :where(.notice-title) > .notice-icon > svg {
+    width: 1.15em;
+    height: 1.15em;
+}
+
+/* Trim only the content container's own edge children. */
+.notice > .notice-content > :first-child { margin-top: 0; }
+.notice > .notice-content > :last-child { margin-bottom: 0; }
+
+/* Native details handles visibility and instant open/close behavior. */
+details.notice > summary.notice-title {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+details.notice > summary.notice-title::-webkit-details-marker {
+    display: none;
+}
+
+/* :where keeps collapsed padding below html:root .notice specificity,
+   so the documented spacing override also applies to collapsed notices. */
+details.notice:where(:not([open])) {
+    padding: .5rem .9rem;
+}
+
+details.notice:not([open]) > .notice-title {
+    margin-bottom: 0;
+}
+
+.notice > .notice-title > .notice-chevron {
+    transition: transform .15s ease;
+}
+
+details.notice[open] > .notice-title > .notice-chevron {
+    transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notice > .notice-title > .notice-chevron {
+        transition: none;
+    }
+}
