@@ -1,6 +1,6 @@
 # hugo-notice
 
-Fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPLv3) — a [Hugo](https://gohugo.io) theme component providing a `notice` shortcode that renders **Obsidian-style callouts**, with native light/dark mode support and [Catppuccin](https://github.com/catppuccin/palette) colors (Latte/Mocha) that fit the PaperMod theme.
+This [Hugo](https://gohugo.io) theme component is a fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPLv3). It provides a `notice` shortcode that displays **Obsidian-style callouts**. The component has native support for light and dark modes. It uses [Catppuccin](https://github.com/catppuccin/palette) colors (Latte/Mocha) that match the PaperMod theme.
 
 ## Features
 
@@ -8,36 +8,36 @@ Fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPL
 - Obsidian aliases: `summary`/`tldr`, `hint`/`important`, `check`/`done`, `help`/`faq`, `caution`/`attention`, `fail`/`missing`, `error`, `cite`
 - Foldable callouts: `{{< notice "tip+" >}}` (expanded) / `{{< notice "tip-" >}}` (collapsed)
 - Custom titles: `{{< notice tip "A New Title" >}}`
-- Dark mode follows the theme toggle — works with PaperMod's `:root[data-theme="dark"]` (also `prefers-color-scheme` and `body.dark` setups)
-- Inline Lucide-style stroke icons, no icon files needed
-- Localization in 18 languages (English and 17 community translations; the 9 new type titles fall back to English in non-English locales)
+- Dark mode follows PaperMod's theme toggle through `:root[data-theme="dark"]`.
+- Inline Lucide-style stroke icons require no icon files.
+- Localization in 18 languages: English and 17 community translations. In non-English locales, the 9 new type titles use English as a fallback.
 
 ## Installation
 
 ### As a Hugo module
 
-1. Initialize your existing site as hugo module
+1. Initialize your existing site as a Hugo module.
 
     ```shell
     hugo mod init github.com/USERNAME/REPO
     ```
 
-2. Add `hugo-notice` as a hugo module
+2. Add `hugo-notice` as a Hugo module.
 
     ```shell
     hugo mod get github.com/nmdra/hugo-notice
     ```
 
-3. In your site's or theme's configuration file `hugo.yaml` or `hugo.toml`, add a new `module` section and define both `hugo-notice` and your currently used theme as modules to be imported.
+3. In your site's or theme's configuration file `hugo.yaml` or `hugo.toml`, add a new `module` section. In this section, define `hugo-notice` and your current theme as modules to import.
 
-    Example, with `hugo.yaml`:
+    Example with `hugo.yaml`:
     ```yaml
     module:
       imports:
         - path: github.com/nmdra/hugo-notice
         - path: my-theme
     ```
-    or, with `hugo.toml`,
+    Or with `hugo.toml`:
     ```toml
     [module]
       [[module.imports]]
@@ -48,22 +48,22 @@ Fork of [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) (GPL
 
 ### As a Git submodule
 
-1. Add `hugo-notice` as a submodule to be able to get upstream changes later `git submodule add https://github.com/nmdra/hugo-notice.git themes/hugo-notice`
+1. Add `hugo-notice` as a submodule so that you can get upstream changes later: `git submodule add https://github.com/nmdra/hugo-notice.git themes/hugo-notice`
 
-2. Add `hugo-notice` as the left-most element of the `theme` list variable in your site's or theme's configuration file `hugo.yaml` or `hugo.toml`.
+2. In your site's or theme's configuration file `hugo.yaml` or `hugo.toml`, add `hugo-notice` as the first element of the `theme` list variable.
 
-   Example, with `hugo.yaml`:
+   Example with `hugo.yaml`:
     ```yaml
     theme: ["hugo-notice", "my-theme"]
     ```
-    or, with `hugo.toml`,
+    Or with `hugo.toml`:
     ```toml
     theme = ["hugo-notice", "my-theme"]
     ```
 
 ## Usage
 
-In your site, use the shortcode, this way:
+Use the shortcode in your site as shown in these examples:
 
 ```markdown
 {{< notice warning >}}
@@ -79,7 +79,7 @@ This is a very good tip.
 
 ### Custom title
 
-You may change the title of the notice by providing a string as a second argument:
+To change the callout title, supply a string as the second argument:
 
 ```markdown
 {{< notice tip "A New Title" >}}
@@ -87,11 +87,11 @@ This is a very good tip with a different title.
 {{< /notice >}}
 ```
 
-Note that unlike the built-in ones, these titles are not translatable by hugo-notice. If you need translation, you will need to translate them before passing them in.
+Unlike built-in titles, custom titles cannot be translated by hugo-notice. If you need a translated custom title, translate the title before you supply it to the shortcode.
 
 ### Aliases
 
-All Obsidian aliases are supported. For example, `{{< notice summary >}}` and `{{< notice tldr >}}` render as `abstract`, and `{{< notice error >}}` renders as `danger`.
+The component supports all Obsidian aliases. For example, `{{< notice summary >}}` and `{{< notice tldr >}}` display as `abstract`. The shortcode `{{< notice error >}}` displays as `danger`.
 
 ### Foldable callouts
 
@@ -128,13 +128,98 @@ The answer is hidden until the reader expands the callout.
 | `example` | — | list | mauve `#8839ef` | `#cba6f7` |
 | `quote` | `cite` | quote | gray `#6c6f85` | `#a6adc8` |
 
-Unknown types fall back to `note` (Obsidian behavior).
+For unknown types, the component uses `note`, as Obsidian does.
 
-The callout background and border are derived from the accent with `color-mix`, so they adapt automatically to light and dark themes. Requires a browser from 2023 onward (Chrome 111+, Firefox 113+, Safari 16.2+).
+The component uses `color-mix` to derive the callout background and border from the accent color. The background and border adapt automatically to light and dark themes. This requires a browser from 2023 onward (Chrome 111+, Firefox 113+, Safari 16.2+).
 
 ### Dark mode
 
-The component targets `:root[data-theme="dark"]`, the standard used by PaperMod's theme toggle. It works out of the box with PaperMod, and also follows the standard `prefers-color-scheme` media feature when no `data-theme` attribute is present (e.g. with other themes).
+The component targets `:root[data-theme="dark"]`, the standard that PaperMod's theme toggle uses. No additional configuration is necessary for PaperMod. Other themes must set `data-theme="dark"` on the root element or supply CSS overrides. The component does not detect `body.dark` or `prefers-color-scheme` automatically.
+
+## Theming
+
+### Add custom CSS
+
+Add the following examples to a stylesheet that your site loads. Use your theme's method for loading custom CSS. You do not need to edit `layouts/shortcodes/notice.html`.
+
+The shortcode inserts a `<style>` element before the first callout on each page. Its rules can appear after your site's stylesheet. The examples use selectors with higher specificity than the component's selectors, so they do not depend on stylesheet order.
+
+### Change accent colors
+
+Set `--notice-accent` on the callout type that you want to change. This property controls the title, icon, left border, background, and other borders. The background mixes 9% of the accent color with transparency. The other borders mix 20% of the accent color with transparency.
+
+This example changes the `tip` accent in light and dark modes:
+
+```css
+html:root .notice.tip {
+    --notice-accent: #006b54;
+}
+
+html:root[data-theme="dark"] .notice.tip {
+    --notice-accent: #70e0c0;
+}
+```
+
+Replace `.tip` with a type from [Types and colors](#types-and-colors). Use the type name, not an alias. For example, `hint` and `important` use the `.tip` class.
+
+Define both rules to use a custom accent in both modes. A light-mode override alone does not replace the component's more specific dark-mode rule.
+
+### Change spacing and borders
+
+Use `.notice` to change all callout containers:
+
+```css
+html:root .notice {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-left-width: 3px;
+    border-radius: 6px;
+}
+```
+
+By default, the border radius uses `--radius`, with `8px` as the fallback. Set `border-radius` directly, as shown above, to change only callouts without changing the theme's shared `--radius` property.
+
+To change the background or border color independently of the accent, override `background` or `border-color` on the same selector.
+
+### Change titles and icons
+
+Use the following selectors to change title spacing and icon size:
+
+```css
+html:root .notice-title {
+    gap: 0.75rem;
+    font-weight: 600;
+}
+
+html:root .notice-icon svg {
+    width: 1.25em;
+    height: 1.25em;
+}
+```
+
+The icons use `currentColor` for their strokes. They inherit the title color unless your CSS overrides it.
+
+### Use another dark-mode selector
+
+If your theme sets `body.dark`, add an override for each type that you want to change:
+
+```css
+html:root body.dark .notice.tip {
+    --notice-accent: #70e0c0;
+}
+```
+
+If your theme uses only the system color preference, put the override in a media query:
+
+```css
+@media (prefers-color-scheme: dark) {
+    html:root:not([data-theme]) .notice.tip {
+        --notice-accent: #70e0c0;
+    }
+}
+```
+
+The media-query example applies only when the root element has no `data-theme` attribute. It does not override an explicit light or dark selection through that attribute. Repeat the rule for other callout types as necessary.
 
 ## Development
 
@@ -144,4 +229,4 @@ Thanks to the original hugo-notice contributors for the 17 non-English translati
 
 ### Acknowledgement
 
-This component is a fork of [hugo-notice](https://github.com/martignoni/hugo-notice) by Nicolas Martignoni, licensed under GPLv3. Lucide icons are MIT-licensed.
+This component is a fork of [hugo-notice](https://github.com/martignoni/hugo-notice) by Nicolas Martignoni. The license is GPLv3. Lucide icons use the MIT license.
